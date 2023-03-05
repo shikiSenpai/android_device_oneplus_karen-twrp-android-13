@@ -1,0 +1,98 @@
+# Android fstab file.
+# The filesystem that contains the filesystem checker binary (typically /system) cannot
+# specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
+
+#<src>                                           <mnt_point>           <type>  <mnt_flags and options>                                     <fs_mgr_flags>
+
+# Note: Dynamic Partitions are configured by TWRP automatically, so no point in setting backup or flashimg for example.
+# Also order of these entries matter. They will show up in the same order in Backup / Mount for example.
+
+
+# Most commonly needed
+/dev/block/by-name/boot                          /boot                 emmc    defaults                                                    slotselect,first_stage_mount,nofail,backup,flashimg
+/dev/block/by-name/userdata                      /data                 f2fs    noatime,nosuid,nodev,discard,noflush_merge,fsync_mode=nobarrier,reserve_root=134217,resgid=1065,inlinecrypt       wait,check,formattable,quota,latemount,resize,reservedsize=128m,checkpoint=fs,fileencryption=aes-256-xts:aes-256-cts:v2+inlinecrypt_optimized,keydirectory=/metadata/vold/metadata_encryption,fsverity
+/dev/block/by-name/vbmeta                        /vbmeta               emmc    defaults                                                    first_stage_mount,nofail,slotselect,backup,flashimg
+/dev/block/by-name/oplusreserve2                 /oplusreserve2        ext4    rw,seclabel,nosuid,nodev,noatime,data=ordered               wait,backup
+
+# Subscriber Identification Module (SIM)
+/dev/block/by-name/protect1                      /protect_f            ext4    noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc    wait,check,formattable,backup
+/dev/block/by-name/protect2                      /protect_s            ext4    noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc    wait,check,formattable,backup
+
+# Core Partitions (Dynamic Partitions)
+system                                           /system               erofs   ro                                                          wait,slotselect,avb=vbmeta_system,logical,first_stage_mount,avb_keys=/avb/q-gsi.avbpubkey:/avb/r-gsi.avbpubkey:/avb/s-gsi.avbpubkey
+vendor                                           /vendor               erofs   ro                                                          wait,slotselect,avb,logical,first_stage_mount
+product                                          /product              ext4    ro,barrier=1                                                wait,slotselect,avb,logical,first_stage_mount
+system_ext                                       /system_ext           erofs   ro                                                          wait,slotselect,avb,logical,first_stage_mount
+odm                                              /odm                  erofs   ro                                                          wait,slotselect,logical,first_stage_mount,nofail
+
+# Core Partitions
+/dev/block/by-name/dtbo                          /dtbo                 emmc    defaults                                                    slotselect,first_stage_mount,nofail,backup
+/dev/block/by-name/metadata                      /metadata             ext4    noatime,nosuid,nodev,discard,sync                           wait,check,formattable,first_stage_mount,backup
+/dev/block/by-name/persist                       /persist              ext4    noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc    wait,check,formattable,backup
+/dev/block/by-name/persist                       /persist_image        emmc    defaults                                                    wait,backup,flashimg
+
+# Secure Boot / Trusted Zone / AVB
+/dev/block/by-name/frp                           /frp                  emmc    defaults                                                    defaults,backup
+/dev/block/by-name/gz                            /gz                   emmc    defaults                                                    defaults,slotselect,backup
+/dev/block/by-name/tee                           /tee                  emmc    defaults                                                    defaults,slotselect,backup
+/dev/block/by-name/vbmeta_system                 /vbmeta_system        emmc    defaults                                                    first_stage_mount,nofail,slotselect,avb=vbmeta,backup
+/dev/block/by-name/vbmeta_vendor                 /vbmeta_vendor        emmc    defaults                                                    first_stage_mount,nofail,slotselect,backup
+
+# Misc OnePlus
+/dev/block/by-name/oplus_custom                  /oplus_custom         emmc    defaults                                                    defaults,backup
+/dev/block/by-name/oplusreserve1                 /oplusreserve1        emmc    defaults                                                    defaults,backup
+/dev/block/by-name/oplusreserve3                 /oplusreserve3        emmc    defaults                                                    defaults,backup
+/dev/block/by-name/oplusreserve5                 /oplusreserve5        emmc    defaults                                                    defaults,backup
+/dev/block/by-name/oplusreserve6                 /oplusreserve6        emmc    defaults                                                    defaults,backup
+
+# Bootloader
+/dev/block/by-name/lk                            /lk                   emmc    defaults                                                    defaults,slotselect,backup
+
+# Non-Volatile (RAM | DATA | CFG)
+/dev/block/by-name/nvcfg                         /nvcfg                ext4    noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc    wait,check,formattable
+/dev/block/by-name/nvdata                        /nvdata               ext4    noatime,nosuid,nodev,noauto_da_alloc,commit=1,nodelalloc    wait,check,formattable
+/dev/block/by-name/nvram                         /nvram                emmc    defaults                                                    defaults
+
+# Misc MTK
+/dev/block/by-name/audio_dsp                     /audio_dsp            emmc    defaults                                                    defaults,slotselect,backup
+/dev/block/by-name/boot_para                     /boot_para            emmc    defaults                                                    defaults,backup
+/dev/block/by-name/cam_vpu1                      /cam_vpu1             emmc    defaults                                                    defaults,slotselect,backup
+/dev/block/by-name/cam_vpu2                      /cam_vpu2             emmc    defaults                                                    defaults,slotselect,backup
+/dev/block/by-name/cam_vpu3                      /cam_vpu3             emmc    defaults                                                    defaults,slotselect,backup
+/dev/block/by-name/cdt_engineering               /cdt_engineering      emmc    defaults                                                    defaults,slotselect,backup
+/dev/block/by-name/dpm                           /dpm                  emmc    defaults                                                    defaults,slotselect,backup
+/dev/block/by-name/expdb                         /expdb                emmc    defaults                                                    defaults,backup
+/dev/block/by-name/flashinfo                     /flashinfo            emmc    defaults                                                    defaults,backup
+/dev/block/by-name/logo                          /logo                 emmc    defaults                                                    defaults,backup
+/dev/block/by-name/mcupm                         /mcupm                emmc    defaults                                                    defaults,slotselect,backup
+/dev/block/by-name/md1img                        /md1img               emmc    defaults                                                    defaults,slotselect,backup
+/dev/block/by-name/misc                          /misc                 emmc    defaults                                                    defaults,backup
+/dev/block/by-name/ocdt                          /ocdt                 emmc    defaults                                                    defaults,backup
+/dev/block/by-name/otp                           /otp                  emmc    defaults                                                    defaults,backup
+/dev/block/by-name/para                          /para                 emmc    defaults                                                    defaults,backup
+/dev/block/by-name/param                         /param                emmc    defaults                                                    defaults,backup
+/dev/block/by-name/pi                            /pi                   emmc    defaults                                                    defaults,slotselect,backup
+/dev/block/by-name/proinfo                       /proinfo              emmc    defaults                                                    defaults,backup
+/dev/block/by-name/scp                           /scp                  emmc    defaults                                                    defaults,slotselect,backup
+/dev/block/by-name/sec1                          /sec1                 emmc    defaults                                                    defaults,backup
+/dev/block/by-name/seccfg                        /seccfg               emmc    defaults                                                    defaults,backup
+/dev/block/by-name/spmfw                         /spmfw                emmc    defaults                                                    defaults,slotselect,backup
+/dev/block/by-name/sspm                          /sspm                 emmc    defaults                                                    defaults,slotselect,backup
+
+# OnePlus Vendor Partitions (Dynamic Partitions)
+my_product                                       /my_product           erofs   ro                                                wait,slotselect,logical,first_stage_mount,nofail
+my_engineering                                   /my_engineering       erofs   ro                                                wait,slotselect,logical,first_stage_mount,nofail
+my_company                                       /my_company           erofs   ro                                                wait,slotselect,logical,first_stage_mount,nofail
+my_carrier                                       /my_carrier           erofs   ro                                                wait,slotselect,logical,first_stage_mount,nofail
+my_region                                        /my_region            erofs   ro                                                wait,slotselect,logical,first_stage_mount,nofail
+my_heytap                                        /my_heytap            erofs   ro                                                wait,slotselect,logical,first_stage_mount,nofail
+my_stock                                         /my_stock             erofs   ro                                                wait,slotselect,logical,first_stage_mount,nofail
+my_preload                                       /my_preload           erofs   ro                                                wait,slotselect,logical,first_stage_mount,nofail
+my_bigball                                       /my_bigball           erofs   ro                                                wait,slotselect,logical,first_stage_mount,nofail
+my_manifest                                      /my_manifest          erofs   ro                                                wait,slotselect,logical,first_stage_mount,nofail
+
+# External-Devices (OTG)
+/devices/platform/usb_xhci*                      auto                  auto    defaults                                                    voldmanaged=usbotg:auto
+
+# ZRAM - Compressed RAM based Block Device (SWAP)
+/dev/block/zram0                                 none        swap   defaults    zramsize=50%,max_comp_streams=8,zram_backingdev_size=512M

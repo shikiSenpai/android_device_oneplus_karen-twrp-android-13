@@ -1,0 +1,5 @@
+# These are not strictly necessary, but preference settings.
+
+# Vibration Strength
+on init
+    write /sys/class/leds/vibrator/gain 0x30
